@@ -9,6 +9,7 @@
         "backup-manager/laravel": "^1.4",
         "barryvdh/laravel-dompdf": "^0.8.0",
         "fideloper/proxy": "^4.0",
+        "guzzlehttp/guzzle": "^6.5",
         "laracasts/flash": "^3.0",
         "laravel/framework": "^6.0",
         "laravel/helpers": "^1.1",

@@ -7,12 +7,8 @@
     <div class="row">
         <div class="login-form">
             <div class="text-center lead">
-                {{ Html::image('imgs/logo.png', env('STORE_NAME'), ['style' => 'width:100px']) }}
+                {{ Html::image('imgs/logo.png', env('STORE_NAME'), ['style' => 'width:100%']) }}
             </div>
-            <p class="text-center lead">
-                {!! __('auth.login_welcome', ['app_name' => env('STORE_NAME')]) !!}
-            </p>
-            <p class="text-center">{{ __('auth.login_notes') }}</p>
             <div class="panel panel-default">
                 <div class="panel-heading"><h3 class="panel-title text-center">{{ __('auth.login') }}</h3></div>
                 <div class="panel-body">

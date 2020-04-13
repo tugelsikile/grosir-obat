@@ -10,7 +10,18 @@ class ProductsController extends Controller
     public function index(Request $request)
     {
         $editableProduct = null;
-        $q = $request->get('q');
+        try{
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('GET', env('API_URL_OBAT') . "/api/medicine/list");
+            $response = json_decode($response->getBody()->getContents());
+            //dd($response);
+        }catch (Exception $exception){
+            return $exception;
+        }
+        $editableProduct = (array)$response->params;
+        //dd($response);
+        //die(var_dump($response));
+        /*$q = $request->get('q');
         $products = Product::where(function ($query) use ($q) {
             if ($q) {
                 $query->where('name', 'like', '%'.$q.'%');
@@ -22,9 +33,9 @@ class ProductsController extends Controller
 
         if (in_array($request->get('action'), ['edit', 'delete']) && $request->has('id')) {
             $editableProduct = Product::find($request->get('id'));
-        }
+        }*/
 
-        return view('products.index', compact('products', 'editableProduct'));
+        return view('products.index', ['products'=>$editableProduct]);
     }
 
     public function store(Request $request)
