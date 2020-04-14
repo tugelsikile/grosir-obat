@@ -19,6 +19,15 @@
             <div class="panel-heading">
                 {{ Form::open(['method' => 'get','class' => 'form-inline']) }}
                 {!! FormField::text('q', ['value' => request('q'), 'label' => __('product.search'), 'class' => 'input-sm']) !!}
+                {!!
+                //var_dump($products);
+                $option = null;
+                foreach ($label_harga as $k=>$v):
+                    $option[$v->id] = $v->name;
+                endforeach;
+                $label = collect($option);
+                !!}
+                {!! FormField::select('price_label', $label) !!}
                 {{ Form::submit(__('product.search'), ['class' => 'btn btn-sm']) }}
                 {{ link_to_route('products.index', __('app.reset')) }}
                 {{ Form::close() }}
@@ -40,13 +49,25 @@
                         <td class="text-center">{{ $key }}</td>
                         <td>{{ $product->name }}</td>
                         <td>{{ $product->type->name }}</td>
-                        <td class="text-right">{{ format_rp($product->name) }}</td>
-                        <td class="text-right">{{ format_rp($product->name) }}</td>
+                        <td class="text-right">
+                            <?php
+                            $price_nya = collect($product->price);
+                            $price_nya = $price_nya->firstWhere('price_label',$cari_label);
+                            //var_dump($price_nya);
+                            if ($price_nya):
+                                $price_nya = $price_nya->price;
+                            else:
+                                $price_nya = 0;
+                            endif;
+                            echo format_rp($price_nya);
+                            ?>
+                        </td>
+                        <td class="text-right">{{ format_rp($price_nya) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
-            {{var_dump($products[0]->price)}}
+            {{--{{var_dump($products[0]->price)}}--}}
             {{--<div class="panel-body">{{ $products->appends(Request::except('page'))->render() }}</div>--}}
         </div>
     </div>

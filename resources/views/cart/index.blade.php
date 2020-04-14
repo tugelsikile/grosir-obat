@@ -4,6 +4,7 @@
 
 @section('content')
 <?php use Facades\App\Cart\CartCollection; ?>
+
 @if (CartCollection::isEmpty())
     <h3 class="page-header">{{ trans('nav_menu.draft_list') }}</h3>
     <form action="{{ route('cart.add') }}" method="POST">
@@ -40,7 +41,7 @@
     })();
 
     $('#query').keyup(function() {
-        delay(function() {
+        /*delay(function() {
             var query = $('#query').val();
             if (query.length >= 3) {
                 $.post(
@@ -55,7 +56,7 @@
                     $('#product-search-result-box').html(data);
                 });
             }
-        }, 200 );
+        }, 200 );*/
     });
 })();
 </script>

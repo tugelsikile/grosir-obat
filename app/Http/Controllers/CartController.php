@@ -7,6 +7,10 @@ use App\Cart\Item;
 use App\Cart\CashDraft;
 use App\Cart\CreditDraft;
 use App\Cart\CartCollection;
+use App\Medicine\{
+    PriceLabel,
+    Medicine
+};
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -16,14 +20,17 @@ class CartController extends Controller
     public function __construct()
     {
         $this->cart = new CartCollection();
+        $this->price_label = new PriceLabel();
+        $this->medicine = new Medicine();
     }
 
     public function index(Request $request)
     {
-        $queriedProducts = [];
+        $queriedProducts = $price_label = [];
         $draft = $this->cart->content()->first();
+        $price_label = $this->price_label->list();
 
-        return view('cart.index', compact('draft', 'queriedProducts'));
+        return view('cart.index', compact('draft', 'queriedProducts','price_label'));
     }
 
     public function show(Request $request, $draftKey)
@@ -38,12 +45,14 @@ class CartController extends Controller
         $query = $request->get('query');
         $queriedProducts = [];
         if ($query) {
-            $queriedProducts = Product::where(function ($q) use ($query) {
+            $queriedProducts = $this->medicine->find($request['query']);
+            /*$queriedProducts = Product::where(function ($q) use ($query) {
                 $q->where('name', 'like', '%'.$query.'%');
-            })->with('unit')->get();
+            })->with('unit')->get();*/
         }
-
-        return view('cart.index', compact('draft', 'queriedProducts'));
+        $cari_label = $request->cari_label;
+        $price_label = $this->price_label->list();
+        return view('cart.index', compact('draft', 'queriedProducts','price_label','cari_label'));
     }
 
     public function add(Request $request)
@@ -57,9 +66,11 @@ class CartController extends Controller
         return redirect()->route('cart.show', $this->cart->content()->last()->draftKey);
     }
 
-    public function addDraftItem(Request $request, $draftKey, Product $product)
+    public function addDraftItem(Request $request, $draftKey, $product)
     {
-        $item = new Item($product, $request->qty);
+        $item = $this->medicine->data($product);
+        //dd($item);
+        //$item = new Item($product, $request->qty);
         $this->cart->addItemToDraft($draftKey, $item);
 
         flash(trans('cart.item_added', [

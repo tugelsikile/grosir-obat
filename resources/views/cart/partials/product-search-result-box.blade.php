@@ -12,8 +12,15 @@
             @forelse($queriedProducts as $product)
             <tr>
                 <td>{{ $product->name }}</td>
-                <td>{{ $product->unit->name }}</td>
-                <td>{{ format_rp($product->getPrice($draftType)) }}</td>
+                <td>{{ $product->type->name }}</td>
+                <td>
+                    <?php
+                    $price_nya = collect($product->price);
+                    $price_nya = $price_nya->firstWhere('price_label',$cari_label);
+                    $price_nya ? $price_nya = $price_nya->price : $price_nya = 0;
+                    echo format_rp($price_nya);
+                    ?>
+                </td>
                 <td>
                     <form action="{{ route('cart.add-draft-item', [$draftKey, $product->id]) }}" method="post" style="display:inline">
                         <input type="hidden" name="query" value="{{ isset($query) ? $query : request('query') }}">

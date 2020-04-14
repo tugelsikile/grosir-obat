@@ -3,39 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\Medicine\PriceLabel;
+use App\Medicine\Medicine;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
+    public function __construct()
+    {
+        $this->price_label = new PriceLabel();
+        $this->medicine = new Medicine();
+    }
+
     public function index(Request $request)
     {
-        $editableProduct = null;
-        try{
-            $client = new \GuzzleHttp\Client();
-            $response = $client->request('GET', env('API_URL_OBAT') . "/api/medicine/list");
-            $response = json_decode($response->getBody()->getContents());
-            //dd($response);
-        }catch (Exception $exception){
-            return $exception;
-        }
-        $editableProduct = (array)$response->params;
-        //dd($response);
-        //die(var_dump($response));
-        /*$q = $request->get('q');
-        $products = Product::where(function ($query) use ($q) {
-            if ($q) {
-                $query->where('name', 'like', '%'.$q.'%');
-            }
-        })
-            ->orderBy('name')
-            ->with('unit')
-            ->paginate(25);
+        $products = $this->medicine->list();
+        $label_harga = $this->price_label->list();
 
-        if (in_array($request->get('action'), ['edit', 'delete']) && $request->has('id')) {
-            $editableProduct = Product::find($request->get('id'));
-        }*/
+        $cari_label = $request->price_label;
 
-        return view('products.index', ['products'=>$editableProduct]);
+        return view('products.index', ['products'=>$products,'label_harga'=>$label_harga,'cari_label'=>$cari_label]);
     }
 
     public function store(Request $request)
